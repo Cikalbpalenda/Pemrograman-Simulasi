@@ -1,0 +1,30 @@
+import numpy as np
+import pandas as pd
+from matplotlib import pyplot as plt
+from sklearn.linear_model import LinearRegression
+
+df = pd.DataFrame([[150,77],[173,85],[137,60],[185,95],[130,51],[135,61],[178,80],[162,76],[151,66],[130,52]])
+df.columns = ['x', 'y']
+
+x_train = df['x'].values[:,np.newaxis]
+y_train = df['y'].values
+
+lm = LinearRegression()
+lm.fit(x_train,y_train) #fase training
+print('Coefficient : ' + str(lm.coef_))
+print('Intercept : ' + str(lm.intercept_))
+
+x_test = [[170],[175]] #data yang akan diprediksi
+
+p = lm.predict(x_test) #fase prediksi
+print(p) #hasil prediksi
+
+#prepare plot
+pb = lm.predict(x_train)
+dfc = pd.DataFrame({'x': df['x'],'y':pb})
+plt.scatter(df['x'],df['y'])
+plt.plot(dfc['x'],dfc['y'],color='red',linewidth=1)
+plt.title('Cikal Bingah Palenda - 152017021')
+plt.xlabel('Tinggi dalam cm')
+plt.ylabel('Berat dalam Kg')
+plt.show()
