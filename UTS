@@ -1,0 +1,158 @@
+---form1---
+procedure TForm1.btn2Click(Sender: TObject);
+begin
+ Form1.Hide;
+ Form3.Show;
+end;
+
+end.
+
+---form3---
+begin
+ Form3.Hide;
+ Form5.Show;
+
+ //input data
+ hasilpanen         := strtofloat(edt_hasilpanen.Text);
+ permintaankonsumen := strtofloat(edt_perkons.Text);
+ pkbertambah        := strtofloat(edt_bertambah.Text);
+ pkberkurang        := strtofloat(edt_berkurang.Text);
+ hpbanyak           := strtofloat(edt_banyak.Text);
+ hpsedikit          := strtofloat(edt_sedikit.Text);
+ hpnaik             := strtofloat(edt_naik.Text);
+ hpturun            := strtofloat(edt_turun.Text);
+
+ //tahap 1 fuzzifikasi
+ Form5.edt_utambah.Text   := FloatToStr((-(hasilpanen-pkbertambah))/(pkbertambah-pkberkurang));
+ Form5.edt_ukurang.Text   := FloatToStr(((hasilpanen-pkberkurang))/(pkbertambah-pkberkurang));
+ Form5.edt_ubanyak.Text   := FloatToStr((-(permintaankonsumen-hpbanyak))/(hpbanyak-hpsedikit));
+ Form5.edt_usedikit.Text  := FloatToStr(((permintaankonsumen-hpsedikit))/(hpbanyak-hpsedikit));
+
+ // grafik tahap 1
+ Form5.cht_perkons.Series[0].Clear;
+ Form5.cht_perkons.Series[0].AddXY(StrToFloat(edt_bertambah.Text), 1);
+ Form5.cht_perkons.Series[0].AddXY(StrToFloat(edt_berkurang.Text), 0);
+ Form5.cht_perkons.Series[1].Clear;
+ Form5.cht_perkons.Series[1].AddXY(StrToFloat(edt_bertambah.Text), 0);
+ Form5.cht_perkons.Series[1].AddXY(StrToFloat(edt_berkurang.Text), 1);
+
+ Form5.cht_hasilpanen.Series[0].Clear;
+ Form5.cht_hasilpanen.Series[0].AddXY(StrToFloat(edt_banyak.Text), 1);
+ Form5.cht_hasilpanen.Series[0].AddXY(StrToFloat(edt_sedikit.Text), 0);
+ Form5.cht_hasilpanen.Series[1].Clear;
+ Form5.cht_hasilpanen.Series[1].AddXY(StrToFloat(edt_banyak.Text), 0);
+ Form5.cht_hasilpanen.Series[1].AddXY(StrToFloat(edt_sedikit.Text), 1);
+
+ Form5.cht_harpen.Series[0].Clear;
+ Form5.cht_harpen.Series[0].AddXY(StrToFloat(edt_naik.Text), 1);
+ Form5.cht_harpen.Series[0].AddXY(StrToFloat(edt_turun.Text), 0);
+ Form5.cht_harpen.Series[1].Clear;
+ Form5.cht_harpen.Series[1].AddXY(StrToFloat(edt_naik.Text), 0);
+ Form5.cht_harpen.Series[1].AddXY(StrToFloat(edt_turun.Text), 1);
+
+ //mengambbil data dari fuzzifikasi tahap 1
+ ubertambah := StrToFloat(Form5.edt_utambah.Text);
+ uberkurang := StrToFloat(Form5.edt_ukurang.Text);
+ ubanyak    := StrToFloat(Form5.edt_ubanyak.Text);
+ usedikit   := StrToFloat(Form5.edt_usedikit.Text);
+
+ //tahap 2 Operasi fuzzy
+ OF_R1 := Min(ubertambah,ubanyak);
+ OF_R2 := Min(ubertambah,usedikit);
+ OF_R3 := Min(uberkurang,ubanyak);
+ OF_R4 := Min(uberkurang,usedikit);
+
+ Form5.edt_OFR1.Text := FloatToStr(OF_R1);
+ Form5.edt_OFR1.Text := FormatFloat('0.##',OF_R1);
+ Form5.edt_OFR2.Text := FloatToStr(OF_R2);
+ Form5.edt_OFR2.Text := FormatFloat('0.##',OF_R2);
+ Form5.edt_OFR3.Text := FloatToStr(OF_R3);
+ Form5.edt_OFR3.Text := FormatFloat('0.##',OF_R3);
+ Form5.edt_OFR4.Text := FloatToStr(OF_R4);
+ Form5.edt_OFR4.Text := FormatFloat('0.##',OF_R4);
+
+ //tahap 3 nilai implikasi
+ Form5.edt_IMPR1.Text := FloatToStr(OF_R1);
+ Form5.edt_IMPR1.Text := FormatFloat('0.##',OF_R1);
+ Form5.edt_IMPR2.Text := FloatToStr(OF_R2);
+ Form5.edt_IMPR2.Text := FormatFloat('0.##',OF_R2);
+ Form5.edt_IMPR3.Text := FloatToStr(OF_R3);
+ Form5.edt_IMPR3.Text := FormatFloat('0.##',OF_R3);
+ Form5.edt_IMPR4.Text := FloatToStr(OF_R4);
+ Form5.edt_IMPR4.Text := FormatFloat('0.##',OF_R4);
+
+ //komposisi aturan
+ ImpNaik                := Max(OF_R1, OF_R3);
+ ImpTurun               := Max(OF_R2, OF_R4);
+ Form5.edt_KaTurun.Text := FloatToStr(ImpTurun);
+ Form5.edt_KaTurun.Text := FormatFloat('0.##',ImpTurun);
+ Form5.edt_KaNaik.Text  := FloatToStr(ImpNaik);
+ Form5.edt_KaNaik.Text  := FormatFloat('0.##',ImpNaik);
+
+
+end;
+
+end.
+
+---form5---
+begin
+Form5.Hide;
+Form3.show;
+end;
+
+procedure TForm5.btn3Click(Sender: TObject);
+
+var
+  random1,random2,random3,random4,random5,random6,random7,random8,random9,random10,naik,turun: Integer;
+begin
+ naik     := StrToInt(Form3.edt_naik.Text);
+ turun    := StrToInt(Form3.edt_turun.Text);
+ random1  := RandomRange(naik,turun);
+ random2  := RandomRange(naik,turun);
+ random3  := RandomRange(naik,turun);
+ random4  := RandomRange(naik,turun);
+ random5  := RandomRange(naik,turun);
+ random6  := RandomRange(naik,turun);
+ random7  := RandomRange(naik,turun);
+ random8  := RandomRange(naik,turun);
+ random9  := RandomRange(naik,turun);
+ random10 := RandomRange(naik,turun);
+
+ edt_FDN1.Text := IntToStr(random1);
+ edt_FDN2.Text := IntToStr(random2);
+ edt_FDN3.Text := IntToStr(random3);
+ edt_FDN4.Text := IntToStr(random4);
+ edt_FDN5.Text := IntToStr(random5);
+ edt_FDT1.Text := IntToStr(random6);
+ edt_FDT2.Text := IntToStr(random7);
+ edt_FDT3.Text := IntToStr(random8);
+ edt_FDT4.Text := IntToStr(random9);
+ edt_FDT5.Text := IntToStr(random10);
+
+
+end;
+
+procedure TForm5.btn4Click(Sender: TObject);
+var
+  Centroid1, Centroid2, Centroid3, Centroid4, Centroid5,
+  Centroid6, Centroid7, Centroid8, Centroid9, Centroid10 : Integer ;
+  KaNaik, KaTurun, HasilAkhir : Single;
+begin
+  Centroid1 := StrToInt(edt_FDN1.Text);
+  Centroid2 := StrToInt(edt_FDN2.Text);
+  Centroid3 := StrToInt(edt_FDN3.Text);
+  Centroid4 := StrToInt(edt_FDN4.Text);
+  Centroid5 := StrToInt(edt_FDN5.Text);
+  Centroid6 := StrToInt(edt_FDT1.Text);
+  Centroid7 := StrToInt(edt_FDT2.Text);
+  Centroid8 := StrToInt(edt_FDT3.Text);
+  Centroid9 := StrToInt(edt_FDT4.Text);
+  Centroid10:= StrToInt(edt_FDT5.Text);
+  KaNaik    := StrToFloat(edt_KaNaik.Text);
+  KaTurun   := StrToFloat(edt_KaTurun.Text);
+
+  HasilAkhir := Round ((((Centroid1+centroid2+centroid3+centroid4+centroid5)*KaNaik+(Centroid6+centroid7+centroid8+centroid9+centroid10)*
+  KaTurun)/((KaNaik*5)+(KaTurun*5))));
+  edt_HasilAkhir.Text := FloatToStr(HasilAkhir) ;
+  
+end;
